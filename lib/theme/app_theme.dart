@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  // Rise Sleep Tracker colors
-  static const background = Color(0xFF151B3D);
-  static const surface = Color(0xFF1C2447);
-  static const primary = Color(0xFF4A7AFF);    // Sleep blue
-  static const energy = Color(0xFF4AECF4);     // Energy cyan
-  static const accent = Color(0xFF7C85FF);     // Purple accent
-  static const warning = Color(0xFFFF6B6B);    // Warning red
-  static const gray = Color(0xFF8F9BB3);       // Secondary text
-  
+  static const background = Color(0xFF1A1B41); // Dark purple background
+  static const surface = Color(0xFF2C2E5B); // Medium purple surface
+  static const primary = Color(0xFF6A5ACD); // Primary purple
+  static const energy = Color(0xFF9370DB); // Light purple energy
+  static const accent = Color(0xFF8A2BE2); // Bright purple accent
+  static const warning = Color(0xFFFF6B6B); // Warning red (unchanged)
+  static const gray = Color(0xFFB0B0C3); // Light gray for secondary text
+
   // Sleep quality colors
   static const optimalSleep = primary;
   static const goodSleep = accent;
   static const poorSleep = energy;
   static const badSleep = warning;
+
+  static const greenLight = Color(0xFF10ED37);
+  static const redLight = Color.fromARGB(255, 236, 8, 27);
 }
 
 class AppTheme {

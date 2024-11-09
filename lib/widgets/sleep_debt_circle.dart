@@ -15,7 +15,13 @@ class SleepDebtCircleWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final progress = math.max(0.0, math.min(1.0, 1 - (debtHours / (targetHours * 7))));
+    // Calculate color based on debt (0h = green, 20h = red)
+    final debtRatio = math.min(debtHours / 20.0, 1.0);  // Clamp to max 20h
+    final color = Color.lerp(
+      Colors.green,
+      Colors.red,
+      debtRatio,
+    )!;
     
     return Center(
       child: Stack(
@@ -25,16 +31,10 @@ class SleepDebtCircleWidget extends StatelessWidget {
             width: 200,
             height: 200,
             child: CircularProgressIndicator(
-              value: progress,
+              value: 1.0, // Always full circle
               strokeWidth: 12,
               backgroundColor: Colors.grey.withOpacity(0.2),
-              valueColor: AlwaysStoppedAnimation<Color>(
-                progress > 0.7 
-                  ? Colors.green 
-                  : progress > 0.4 
-                    ? Colors.orange 
-                    : Colors.red,
-              ),
+              valueColor: AlwaysStoppedAnimation<Color>(color),
             ),
           ),
           Column(

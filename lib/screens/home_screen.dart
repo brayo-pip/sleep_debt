@@ -5,7 +5,7 @@ import '../widgets/sleep_debt_circle.dart';
 import '../widgets/weekly_sleep_trend.dart';
 import '../widgets/last_night_sleep_panel.dart';
 import '../widgets/debt_trend_panel.dart';
-import '../widgets/tomorrow_recommendations.dart';
+import '../widgets/sleep_window_visualization.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -34,11 +34,6 @@ class HomeScreen extends StatelessWidget {
         final lastSleepDuration = provider.getLastNightSleep();
         final lastSleepStart = provider.getLastSleepStart();
         final lastSleepEnd = provider.getLastSleepEnd();
-
-        // Calculate recommended times based on last sleep pattern or defaults
-        final now = DateTime.now();
-        final recommendedBedtime = now.add(const Duration(hours: 16));
-        final recommendedWakeTime = recommendedBedtime.add(const Duration(hours: 8));
         
         return RefreshIndicator(
           onRefresh: provider.refreshSleepData,
@@ -65,10 +60,14 @@ class HomeScreen extends StatelessWidget {
                 isImproving: stats['trend'] == 'Improving',
               ),
               const SizedBox(height: 16),
-              TomorrowRecommendations(
-                recommendedBedtime: recommendedBedtime,
-                recommendedWakeTime: recommendedWakeTime,
-                targetSleepDuration: const Duration(hours: 8),
+              SleepWindowVisualization(
+                sleepDebt: stats['currentDebt'] ?? 0.0,
+                lastSleepTime: lastSleepStart != null 
+                  ? TimeOfDay.fromDateTime(lastSleepStart)
+                  : null,
+                lastWakeTime: lastSleepEnd != null
+                  ? TimeOfDay.fromDateTime(lastSleepEnd)
+                  : null,
               ),
             ],
           ),

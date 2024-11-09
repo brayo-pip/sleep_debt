@@ -171,4 +171,38 @@ class HealthConnectProvider extends ChangeNotifier {
     final hours = _dailySleepHours[lastDay] ?? 0;
     return Duration(seconds: (hours * 3600).round());
   }
+
+  // Get recent wake times for sleep window calculation
+  List<TimeOfDay> getRecentWakeTimes() {
+    if (_sleepRecords.isEmpty) return [];
+    
+    // Get wake times from last 7 days of records
+    final now = DateTime.now();
+    final weekAgo = now.subtract(const Duration(days: 7));
+    
+    return _sleepRecords
+      .where((record) => record.endTime.isAfter(weekAgo))
+      .map((record) => TimeOfDay(
+        hour: record.endTime.hour,
+        minute: record.endTime.minute,
+      ))
+      .toList();
+  }
+
+  // Get the last sleep and wake times
+  ({TimeOfDay? sleepTime, TimeOfDay? wakeTime}) getLastSleepTimes() {
+    if (_sleepRecords.isEmpty) return (sleepTime: null, wakeTime: null);
+    
+    final lastRecord = _sleepRecords.last;
+    return (
+      sleepTime: TimeOfDay(
+        hour: lastRecord.startTime.hour,
+        minute: lastRecord.startTime.minute,
+      ),
+      wakeTime: TimeOfDay(
+        hour: lastRecord.endTime.hour,
+        minute: lastRecord.endTime.minute,
+      ),
+    );
+  }
 }

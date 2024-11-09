@@ -49,10 +49,10 @@ class DebtTrendPanel extends StatelessWidget {
                   ),
                   child: Icon(
                     isImproving 
-                        ? Icons.trending_up 
-                        : Icons.trending_down,
+                        ? Icons.trending_down 
+                        : Icons.trending_up,
                     color: isImproving 
-                        ? AppColors.primary 
+                        ? AppColors.greenLight 
                         : AppColors.warning,
                     size: 32,
                   ),
