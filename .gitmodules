@@ -1,0 +1,3 @@
+[submodule "flutter_health_connect"]
+	path = flutter_health_connect
+	url = https://github.com/brayo-pip/flutter_health_connect
