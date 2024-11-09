@@ -51,9 +51,7 @@ class HomeScreen extends StatelessWidget {
                 targetHours: 8.0,
               ),
               const SizedBox(height: 24),
-              WeeklySleepTrend(
-                sleepRecords: provider.sleepRecords,
-              ),
+              const WeeklySleepTrend(),
               const SizedBox(height: 16),
               LastNightSleepPanel(
                 sleepDuration: lastSleepDuration,

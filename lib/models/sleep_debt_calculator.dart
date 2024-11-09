@@ -15,19 +15,20 @@ class SleepDebtCalculator {
   double get currentDebt => _currentDebt;
   List<double> get weeklyAverages => List.unmodifiable(_weeklyAverages);
 
-  void calculateDebtFromRecords(List<SleepSessionRecord> records) {
+  void calculateDebtFromDailySleep(Map<DateTime, double> dailySleepHours) {
     // Reset current calculations
     _currentDebt = 0.0;
     _weeklyAverages.clear();
 
-    // Convert records to sleep hours and sort by date
-    final sleepHours = records
-        .map((record) => record.endTime.difference(record.startTime).inHours.toDouble())
-        .toList()
+    if (dailySleepHours.isEmpty) return;
+
+    // Sort days chronologically
+    final sortedDays = dailySleepHours.keys.toList()
       ..sort();
 
-    // Calculate debt for each sleep record
-    for (final hours in sleepHours) {
+    // Calculate debt for each day's sleep total
+    for (final day in sortedDays) {
+      final hours = dailySleepHours[day]!;
       final double dailyDifference = targetSleepHours - hours;
 
       if (dailyDifference > 0) {
@@ -42,8 +43,12 @@ class SleepDebtCalculator {
     }
 
     // Update weekly averages if we have enough data
-    if (sleepHours.length >= 7) {
-      final weeklyAvg = _calculateWeeklyAverage(sleepHours.sublist(sleepHours.length - 7));
+    if (sortedDays.length >= 7) {
+      final lastWeekHours = sortedDays
+          .sublist(sortedDays.length - 7)
+          .map((day) => dailySleepHours[day]!)
+          .toList();
+      final weeklyAvg = _calculateWeeklyAverage(lastWeekHours);
       _weeklyAverages.add(weeklyAvg);
     }
   }
@@ -79,8 +84,8 @@ class SleepDebtCalculator {
     return (_currentDebt / recoveryPerDay).ceil();
   }
 
-  Map<String, dynamic> getSleepStats(List<SleepSessionRecord> records) {
-    if (records.isEmpty) {
+  Map<String, dynamic> getSleepStats(Map<DateTime, double> dailySleepHours) {
+    if (dailySleepHours.isEmpty) {
       return {
         'averageSleep': 0.0,
         'minSleep': 0.0,
@@ -88,14 +93,13 @@ class SleepDebtCalculator {
         'currentDebt': 0.0,
         'trend': 'No data',
         'recoveryDays': 0,
+        'dailySleep': <DateTime, double>{},
       };
     }
 
-    calculateDebtFromRecords(records);
+    calculateDebtFromDailySleep(dailySleepHours);
 
-    final sleepHours = records
-        .map((record) => record.endTime.difference(record.startTime).inHours.toDouble())
-        .toList();
+    final sleepHours = dailySleepHours.values.toList();
 
     return {
       'averageSleep': sleepHours.reduce((a, b) => a + b) / sleepHours.length,
@@ -104,6 +108,7 @@ class SleepDebtCalculator {
       'currentDebt': _currentDebt,
       'trend': getDebtTrend(),
       'recoveryDays': getRecoveryEstimate(),
+      'dailySleep': Map<DateTime, double>.from(dailySleepHours),
     };
   }
 }
