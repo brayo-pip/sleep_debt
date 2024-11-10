@@ -80,7 +80,7 @@ class SleepDebtCalculator {
     }
 
     const double extraSleepPerDay = 1.0;
-    final double recoveryPerDay = extraSleepPerDay * recoveryRate;
+    const double recoveryPerDay = extraSleepPerDay * recoveryRate;
     return (_currentDebt / recoveryPerDay).ceil();
   }
 

@@ -37,7 +37,7 @@ class SleepWindowCalculator {
     // Calculate recovery sleep if needed
     double extraSleepHours = 0.0;
     if (sleepDebt >= minDebtForRecovery) {
-      double dailyRecovery = sleepDebt / recoveryDays;
+      final double dailyRecovery = sleepDebt / recoveryDays;
       extraSleepHours = dailyRecovery.clamp(0.0, maxExtraPerNight);
     }
 
@@ -51,10 +51,10 @@ class SleepWindowCalculator {
     if (recentWakeTimes != null && recentWakeTimes.isNotEmpty) {
       // Calculate average wake time from recent history
       int totalMinutes = 0;
-      for (var time in recentWakeTimes) {
+      for (final time in recentWakeTimes) {
         totalMinutes += _timeOfDayToMinutes(time);
       }
-      int avgMinutes = totalMinutes ~/ recentWakeTimes.length;
+      final int avgMinutes = totalMinutes ~/ recentWakeTimes.length;
       targetWakeTime = _minutesToTimeOfDay(avgMinutes);
     } else if (lastWakeTime != null) {
       // Use last wake time if available
@@ -69,7 +69,7 @@ class SleepWindowCalculator {
     
     // If they have a recent sleep time, average it with optimal time
     if (lastSleepTime != null) {
-      int lastBedMinutes = _timeOfDayToMinutes(lastSleepTime);
+      final int lastBedMinutes = _timeOfDayToMinutes(lastSleepTime);
       optimalMinutes = (optimalMinutes + lastBedMinutes) ~/ 2;
     }
     
@@ -95,7 +95,7 @@ class SleepWindowCalculator {
   }
 
   static Duration calculateSleepDuration(TimeOfDay bedTime, TimeOfDay wakeTime) {
-    int bedMinutes = _timeOfDayToMinutes(bedTime);
+    final int bedMinutes = _timeOfDayToMinutes(bedTime);
     int wakeMinutes = _timeOfDayToMinutes(wakeTime);
     
     // Handle crossing midnight

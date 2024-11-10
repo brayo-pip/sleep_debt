@@ -4,8 +4,14 @@ import 'screens/home_screen.dart';
 import 'screens/placeholder_screen.dart';
 import 'theme/app_theme.dart';
 import 'providers/health_connect_provider.dart';
+import 'data/database_helper.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize database
+  await DatabaseHelper.instance.database;
+  
   runApp(
     ChangeNotifierProvider(
       create: (context) => HealthConnectProvider(),

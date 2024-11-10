@@ -49,7 +49,7 @@ class TomorrowRecommendations extends StatelessWidget {
                     color: AppColors.primary.withOpacity(0.2),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Icon(
+                  child: const Icon(
                     Icons.bedtime,
                     size: 32,
                     color: AppColors.primary,

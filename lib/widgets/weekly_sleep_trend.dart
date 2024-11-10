@@ -12,6 +12,18 @@ class WeeklySleepTrend extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final provider = context.watch<HealthConnectProvider>();
+    
+    if (provider.isLoading) {
+      return const Card(
+        child: Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Center(
+            child: CircularProgressIndicator(),
+          ),
+        ),
+      );
+    }
+
     final stats = provider.stats;
     final dailySleep = stats['dailySleep'] as Map<DateTime, double>;
     

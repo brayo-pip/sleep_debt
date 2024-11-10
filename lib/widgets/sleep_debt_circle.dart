@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'dart:math' as math;
-import '../theme/app_theme.dart';
+import '../providers/health_connect_provider.dart';
 
 class SleepDebtCircleWidget extends StatelessWidget {
   final double debtHours;
@@ -15,6 +16,14 @@ class SleepDebtCircleWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final provider = Provider.of<HealthConnectProvider>(context);
+
+    if (provider.isLoading) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+
     // Calculate color based on debt (0h = green, 20h = red)
     final debtRatio = math.min(debtHours / 20.0, 1.0);  // Clamp to max 20h
     final color = Color.lerp(

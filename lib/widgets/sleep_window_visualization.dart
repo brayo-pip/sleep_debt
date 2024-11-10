@@ -19,6 +19,18 @@ class SleepWindowVisualization extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final provider = Provider.of<HealthConnectProvider>(context);
+
+    if (provider.isLoading) {
+      return const Card(
+        child: Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Center(
+            child: CircularProgressIndicator(),
+          ),
+        ),
+      );
+    }
+
     final recentWakeTimes = provider.getRecentWakeTimes();
     final lastSleepTimes = provider.getLastSleepTimes();
     

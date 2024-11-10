@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart' show TimeOfDay, ChangeNotifier, debugPrint;
 import 'package:flutter_health_connect/flutter_health_connect.dart';
 import '../models/sleep_debt_calculator.dart';
+import '../data/database_helper.dart';
 
 class HealthConnectProvider extends ChangeNotifier {
   final SleepDebtCalculator _calculator = SleepDebtCalculator();
@@ -10,22 +11,29 @@ class HealthConnectProvider extends ChangeNotifier {
   // Stats for UI
   Map<String, dynamic> get stats => _calculator.getSleepStats(_dailySleepHours);
 
+  bool _isLoading = true;
+  bool get isLoading => _isLoading;
+
   Future<void> initialize() async {
     try {
-      // Check if Health Connect is supported
+      // First load data from database
+      await _loadFromDatabase();
+      _isLoading = false;
+      _isInitialized = true;
+      notifyListeners();
+
+      // Then initialize Health Connect and refresh data in background
       final bool isSupported = await HealthConnectFactory.checkIfSupported();
       if (!isSupported) {
         throw Exception('Health Connect is not supported on this device');
       }
 
-      // Check if Health Connect app is installed
       final bool isInstalled = await HealthConnectFactory.checkIfHealthConnectAppInstalled();
       if (!isInstalled) {
         await HealthConnectFactory.installHealthConnect();
         return;
       }
 
-      // Request permissions
       final List<HealthConnectDataType> types = [HealthConnectDataType.SleepSession];
       final bool hasPermissions = await HealthConnectFactory.checkPermissions(types, readOnly: true);
       if (!hasPermissions) {
@@ -34,11 +42,8 @@ class HealthConnectProvider extends ChangeNotifier {
           throw Exception('Required permissions not granted');
         }
       }
-
-      _isInitialized = true;
-      notifyListeners();
       
-      // Load initial data
+      // Refresh from Health Connect in background
       await refreshSleepData();
     } catch (e) {
       _isInitialized = false;
@@ -73,17 +78,23 @@ class HealthConnectProvider extends ChangeNotifier {
           endTime: dayEnd,
         );
 
-        // The key in the map will be something like "sleep_duration_total"
-        // and the value will be the total sleep time in seconds
+        double sleepHours = 0.0;
         if (sleepTime.containsKey(SleepSessionRecord.aggregationKeySleepDurationTotal)) {
           final double seconds = sleepTime[SleepSessionRecord.aggregationKeySleepDurationTotal] as double;
-          _dailySleepHours[dayStart] = seconds / 3600; // Convert seconds to hours
-        } else {
-          _dailySleepHours[dayStart] = 0.0; // No sleep recorded for this day
+          sleepHours = seconds / 3600; // Convert seconds to hours
         }
+        
+        // Store in memory
+        _dailySleepHours[dayStart] = sleepHours;
+        
+        // Persist to database
+        await DatabaseHelper.instance.updateDailySleep(
+          dayStart.toIso8601String().split('T')[0],
+          sleepHours,
+        );
       }
 
-      // Also get the detailed sleep records for timing information
+      // Get and store detailed sleep records
       final records = await HealthConnectFactory.getRecords(
         startTime: startTime,
         endTime: now,
@@ -91,9 +102,42 @@ class HealthConnectProvider extends ChangeNotifier {
       );
       _sleepRecords = records.cast<SleepSessionRecord>();
 
+      // Store records in database
+      for (final record in _sleepRecords) {
+        await DatabaseHelper.instance.insertSleepRecord({
+          'start_time': record.startTime.millisecondsSinceEpoch,
+          'end_time': record.endTime.millisecondsSinceEpoch,
+          'duration_seconds': record.endTime.difference(record.startTime).inSeconds,
+          'source': 'health_connect',
+        });
+      }
+
       notifyListeners();
     } catch (e) {
       debugPrint('Error refreshing sleep data: $e');
+      // Try to load from database if Health Connect fails
+      await _loadFromDatabase();
+    }
+  }
+
+  Future<void> _loadFromDatabase() async {
+    try {
+      final now = DateTime.now();
+      final startTime = now.subtract(const Duration(days: 14));
+      
+      // Load daily sleep data
+      _dailySleepHours = await DatabaseHelper.instance.getDailySleep(startTime, now);
+      
+      // Load sleep records
+      final records = await DatabaseHelper.instance.getSleepRecords(startTime, now);
+      _sleepRecords = records.map((record) => SleepSessionRecord(
+        startTime: DateTime.fromMillisecondsSinceEpoch(record['start_time'] as int),
+        endTime: DateTime.fromMillisecondsSinceEpoch(record['end_time'] as int),
+      )).toList();
+
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error loading from database: $e');
     }
   }
 
