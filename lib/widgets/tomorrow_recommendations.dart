@@ -26,8 +26,8 @@ class TomorrowRecommendations extends StatelessWidget {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              AppColors.surface,
-              AppColors.surface.withOpacity(0.8),
+              Theme.of(context).colorScheme.surface,
+              Theme.of(context).colorScheme.surface.withOpacity(0.8),
             ],
           ),
         ),
@@ -43,6 +43,7 @@ class TomorrowRecommendations extends StatelessWidget {
             const SizedBox(height: 16),
             Row(
               children: [
+                const SizedBox(width: 8),
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
@@ -89,6 +90,7 @@ class TomorrowRecommendations extends StatelessWidget {
                     ],
                   ),
                 ),
+                const SizedBox(width: 8),
               ],
             ),
           ],
@@ -121,7 +123,7 @@ class _TimeDisplay extends StatelessWidget {
         Text(
           TimeOfDay.fromDateTime(time).format(context),
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            color: AppColors.energy,
+            color: Colors.deepPurple[500],
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -149,7 +151,7 @@ class _DurationDisplay extends StatelessWidget {
         Text(
           '${duration.inHours}:${(duration.inMinutes % 60).toString().padLeft(2, '0')}',
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            color: AppColors.energy,
+            color: Colors.deepPurple[500],
             fontWeight: FontWeight.w600,
           ),
         ),

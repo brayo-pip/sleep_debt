@@ -104,9 +104,11 @@ class SleepWindowVisualization extends StatelessWidget {
               Text(
                 sleepDebt >= SleepWindowCalculator.minDebtForRecovery
                   ? '(Including up to ${SleepWindowCalculator.maxExtraPerNight} hour extra for sleep debt recovery)'
-                  : '(Sleep debt too low for recovery mode)',
+                  : '(No extra sleep needed. Keep it up!)',
                 style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.error,
+                  color: sleepDebt >= SleepWindowCalculator.minDebtForRecovery
+                    ? theme.colorScheme.error
+                    : theme.colorScheme.primary,
                 ),
               ),
             ],

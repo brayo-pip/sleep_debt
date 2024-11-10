@@ -42,7 +42,7 @@ class HomeScreen extends StatelessWidget {
             children: [
               const SizedBox(height: 20),
               SleepDebtCircleWidget(
-                debtHours: stats['currentDebt'],
+                debtHours: (stats['currentDebt'] as double?) ?? 0.0,
                 targetHours: 8.0,
               ),
               const SizedBox(height: 24),
@@ -56,12 +56,19 @@ class HomeScreen extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               DebtTrendPanel(
-                weeklyChange: stats['averageSleep'] - 8.0,
-                isImproving: stats['trend'] == 'Improving',
+                rawDebt: (stats['rawDebt'] as double?) ?? 0.0,
+                smoothedDebt: (stats['currentDebt'] as double?) ?? 0.0,
+                trend: (stats['trend'] as String?) ?? 'No data',
+                trendDetails: (stats['trendDetails'] as Map<String, num>?) ?? {
+                  'firstHalfAvg': 0,
+                  'secondHalfAvg': 0,
+                  'difference': 0,
+                  'trendStrength': 0,
+                },
               ),
               const SizedBox(height: 16),
               SleepWindowVisualization(
-                sleepDebt: stats['currentDebt'] ?? 0.0,
+                sleepDebt: (stats['currentDebt'] as double?) ?? 0.0,
                 lastSleepTime: lastSleepStart != null 
                   ? TimeOfDay.fromDateTime(lastSleepStart)
                   : null,

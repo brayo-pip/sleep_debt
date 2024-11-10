@@ -9,23 +9,31 @@ class SleepDebtProvider with ChangeNotifier {
     'minSleep': 0.0,
     'maxSleep': 0.0,
     'currentDebt': 0.0,
+    'smoothedDebt': 0.0,
     'trend': 'No data',
     'recoveryDays': 0,
+    'dailySleep': <DateTime, double>{},
   };
 
   Map<String, dynamic> get stats => _stats;
-  List<double> get sleepRecords => _calculator.sleepRecords;
-  double get currentDebt => _calculator.currentDebt;
+  double get currentDebt => _calculator.currentDebt;  // This now returns smoothed debt
 
-  void addSleepRecord(double hours) {
-    _calculator.addSleepRecord(hours);
-    _stats = _calculator.getSleepStats();
+  void updateSleepData(Map<DateTime, double> dailySleepHours) {
+    _stats = _calculator.getSleepStats(dailySleepHours);
     notifyListeners();
   }
 
   void reset() {
-    _calculator.reset();
-    _stats = _calculator.getSleepStats();
+    _stats = {
+      'averageSleep': 0.0,
+      'minSleep': 0.0,
+      'maxSleep': 0.0,
+      'currentDebt': 0.0,
+      'smoothedDebt': 0.0,
+      'trend': 'No data',
+      'recoveryDays': 0,
+      'dailySleep': <DateTime, double>{},
+    };
     notifyListeners();
   }
 }

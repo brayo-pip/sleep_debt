@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart' show TimeOfDay, ChangeNotifier, debugPrint;
+import 'dart:math' show pow;
 import 'package:flutter_health_connect/flutter_health_connect.dart';
 import '../models/sleep_debt_calculator.dart';
 import '../data/database_helper.dart';
@@ -9,7 +10,35 @@ class HealthConnectProvider extends ChangeNotifier {
   bool get isInitialized => _isInitialized;
   
   // Stats for UI
-  Map<String, dynamic> get stats => _calculator.getSleepStats(_dailySleepHours);
+  Map<String, dynamic> get stats {
+    final baseStats = _calculator.getSleepStats(_dailySleepHours);
+    // Use calculator's weighted average for consistency
+    return baseStats;
+  }
+
+  double getWeightedWeeklyAverage() {
+    if (_dailySleepHours.isEmpty) return 0.0;
+
+    final now = DateTime.now();
+    final days = List.generate(7, (i) => 
+      DateTime(now.year, now.month, now.day).subtract(Duration(days: i)));
+    
+    double weightedSum = 0.0;
+    double totalSleepDays = 0.0;
+
+    // Use same decay factor as SleepDebtCalculator
+    const decayFactor = SleepDebtCalculator.decayFactor;
+
+    for (int i = 0; i < days.length; i++) {
+      final weight = pow(decayFactor, i).toDouble();
+      final hours = _dailySleepHours[days[i]] ?? 0.0;
+      
+      weightedSum += hours * weight;
+      totalSleepDays += 1;
+    }
+
+    return weightedSum / totalSleepDays;
+  }
 
   bool _isLoading = true;
   bool get isLoading => _isLoading;

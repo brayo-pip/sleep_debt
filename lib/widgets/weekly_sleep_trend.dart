@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/health_connect_provider.dart';
+import '../theme/app_theme.dart';
 
 class WeeklySleepTrend extends StatelessWidget {
-  static const double targetSleepHours = 8.0;
-  static const double maxDisplayHours = 12.0;
-  
   const WeeklySleepTrend({super.key});
 
   @override
@@ -51,11 +49,12 @@ class WeeklySleepTrend extends StatelessWidget {
             final isToday = index == 6;
             
             return Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
                   weekDays[weekdayIndex],
                   style: theme.textTheme.bodyLarge?.copyWith(
-                    color: isToday ? Colors.white : Colors.grey,
+                    color: isToday ? theme.colorScheme.onSurface : AppColors.gray,
                     fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
                   ),
                 ),
@@ -67,15 +66,17 @@ class WeeklySleepTrend extends StatelessWidget {
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
                     color: hours > 0 
-                      ? hours >= 8.0
-                        ? Colors.green 
-                        : Colors.red
-                      : Colors.grey,
+                      ? hours >= 7.0
+                        ? AppColors.debtFree 
+                        : hours >= 6.0
+                          ? AppColors.minimalDebt
+                          : AppColors.highDebt
+                      : AppColors.gray,
                   ),
                 ),
               ],
             );
-          }),
+          }).toList(),
         ),
       ),
     );

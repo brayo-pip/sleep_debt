@@ -1,38 +1,114 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  static const background = Color(0xFF1A1B41); // Dark purple background
-  static const surface = Color(0xFF2C2E5B); // Medium purple surface
-  static const primary = Color(0xFF6A5ACD); // Primary purple
-  static const energy = Color(0xFF9370DB); // Light purple energy
-  static const accent = Color(0xFF8A2BE2); // Bright purple accent
-  static const warning = Color(0xFFFF6B6B); // Warning red (unchanged)
-  static const gray = Color(0xFFB0B0C3); // Light gray for secondary text
+  // Base colors
+  static const black = Color(0xFF000000);
+  static const white = Color(0xFFFFFFFF);
+  static const gray = Color(0xFF757575);
+  static const lightGray = Color(0xFFE0E0E0);
+  static const darkGray = Color(0xFF424242);
 
-  // Sleep quality colors
-  static const optimalSleep = primary;
-  static const goodSleep = accent;
-  static const poorSleep = energy;
-  static const badSleep = warning;
+  // Primary colors (more subtle)
+  static const primary = Color(0xFF6B7FD7);
+  static const warning = Color(0xFFFF6B6B);
 
-  static const greenLight = Color(0xFF10ED37);
-  static const redLight = Color.fromARGB(255, 236, 8, 27);
+  // Sleep debt severity colors
+  static const debtFree = Color(0xFF2E7D32);      // Dark green
+  static const minimalDebt = Color(0xFFFDD835);   // Yellow
+  static const moderateDebt = Color(0xFFFDD835);  // Yellow
+  static const highDebt = Color(0xFFEF5350);      // Light red
+  static const severeDebt = Color(0xFFB71C1C);
+
+  static var energy;
+
+  static var surface;    // Dark red
+
+  static Color getDebtColor(double debtHours) {
+    if (debtHours <= 5) return debtFree;
+    if (debtHours < 8) return minimalDebt;
+    if (debtHours < 15) return moderateDebt;
+    if (debtHours > 15) return highDebt;
+    return severeDebt;
+  }
 }
 
 class AppTheme {
-  static final ThemeData darkTheme = ThemeData(
+  static final ThemeData lightTheme = ThemeData(
     useMaterial3: true,
-    brightness: Brightness.dark,
-    scaffoldBackgroundColor: AppColors.background,
-    colorScheme: const ColorScheme.dark(
+    brightness: Brightness.light,
+    scaffoldBackgroundColor: AppColors.white,
+    colorScheme: const ColorScheme.light(
       primary: AppColors.primary,
-      secondary: AppColors.energy,
-      surface: AppColors.surface,
-      background: AppColors.background,
+      onPrimary: AppColors.white,
+      surface: AppColors.white,
+      background: AppColors.white,
       error: AppColors.warning,
     ),
     cardTheme: CardTheme(
-      color: AppColors.surface,
+      color: AppColors.white,
+      elevation: 1,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+      ),
+      margin: const EdgeInsets.symmetric(vertical: 8),
+    ),
+    bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+      backgroundColor: AppColors.white,
+      selectedItemColor: AppColors.primary,
+      unselectedItemColor: AppColors.gray,
+    ),
+    textTheme: const TextTheme(
+      headlineLarge: TextStyle(
+        color: AppColors.black,
+        fontSize: 32,
+        fontWeight: FontWeight.w600,
+        letterSpacing: -0.5,
+      ),
+      headlineMedium: TextStyle(
+        color: AppColors.black,
+        fontSize: 24,
+        fontWeight: FontWeight.w600,
+        letterSpacing: -0.5,
+      ),
+      headlineSmall: TextStyle(
+        color: AppColors.black,
+        fontSize: 20,
+        fontWeight: FontWeight.w600,
+      ),
+      titleLarge: TextStyle(
+        color: AppColors.black,
+        fontSize: 18,
+        fontWeight: FontWeight.w600,
+      ),
+      titleMedium: TextStyle(
+        color: AppColors.gray,
+        fontSize: 16,
+        fontWeight: FontWeight.w500,
+      ),
+      bodyLarge: TextStyle(
+        color: AppColors.black,
+        fontSize: 16,
+      ),
+      bodyMedium: TextStyle(
+        color: AppColors.gray,
+        fontSize: 14,
+      ),
+    ),
+  );
+
+  static final ThemeData darkTheme = ThemeData(
+    useMaterial3: true,
+    brightness: Brightness.dark,
+    scaffoldBackgroundColor: AppColors.black,
+    colorScheme: const ColorScheme.dark(
+      primary: AppColors.primary,
+      onPrimary: AppColors.white,
+      surface: AppColors.black,
+      background: AppColors.black,
+      error: AppColors.warning,
+    ),
+    cardTheme: CardTheme(
+      color: AppColors.black,
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
@@ -40,7 +116,7 @@ class AppTheme {
       margin: const EdgeInsets.symmetric(vertical: 8),
     ),
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.black,
       selectedItemColor: AppColors.primary,
       unselectedItemColor: AppColors.gray,
     ),
@@ -86,13 +162,13 @@ class AppTheme {
   static Color getSleepQualityColor(Duration sleepDuration) {
     final hours = sleepDuration.inMinutes / 60;
     if (hours >= 7 && hours <= 9) {
-      return AppColors.optimalSleep;
+      return AppColors.debtFree;
     } else if (hours >= 6 && hours < 7) {
-      return AppColors.goodSleep;
+      return AppColors.minimalDebt;
     } else if (hours >= 5 && hours < 6) {
-      return AppColors.poorSleep;
+      return AppColors.moderateDebt;
     } else {
-      return AppColors.badSleep;
+      return AppColors.highDebt;
     }
   }
 }

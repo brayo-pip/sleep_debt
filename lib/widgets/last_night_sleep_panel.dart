@@ -18,6 +18,7 @@ class LastNightSleepPanel extends StatelessWidget {
   final DateTime? sleepStart;
   final DateTime? sleepEnd;
   final double targetHours;
+  static const double recommendedHours = 8.0;
 
   const LastNightSleepPanel({
     super.key,
@@ -62,14 +63,7 @@ class LastNightSleepPanel extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              AppColors.surface,
-              AppColors.surface.withOpacity(0.8),
-            ],
-          ),
+          color: Theme.of(context).colorScheme.surface,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -93,7 +87,10 @@ class LastNightSleepPanel extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      _formatDifference(sleepDuration!, Duration(hours: targetHours.toInt())),
+                      _formatDifference(
+                        sleepDuration!, 
+                        Duration(hours: recommendedHours.toInt()),
+                      ),
                       style: TextStyle(
                         color: AppTheme.getSleepQualityColor(sleepDuration!),
                         fontWeight: FontWeight.w600,
@@ -107,7 +104,7 @@ class LastNightSleepPanel extends StatelessWidget {
                     Text('$timeFormat - $endTimeFormat'),
                     const SizedBox(height: 4),
                     Text(
-                      'Target: ${targetHours.toStringAsFixed(1)}h',
+                      'Target: ${recommendedHours}h',
                       style: theme.textTheme.bodySmall,
                     ),
                   ],

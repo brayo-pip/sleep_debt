@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'dart:math' as math;
 import '../providers/health_connect_provider.dart';
+import '../theme/app_theme.dart';
 
 class SleepDebtCircleWidget extends StatelessWidget {
   final double debtHours;
@@ -24,13 +25,7 @@ class SleepDebtCircleWidget extends StatelessWidget {
       );
     }
 
-    // Calculate color based on debt (0h = green, 20h = red)
-    final debtRatio = math.min(debtHours / 20.0, 1.0);  // Clamp to max 20h
-    final color = Color.lerp(
-      Colors.green,
-      Colors.red,
-      debtRatio,
-    )!;
+    final baseColor = AppColors.getDebtColor(debtHours);
     
     return Center(
       child: Stack(
@@ -39,23 +34,37 @@ class SleepDebtCircleWidget extends StatelessWidget {
           SizedBox(
             width: 200,
             height: 200,
-            child: CircularProgressIndicator(
-              value: 1.0, // Always full circle
-              strokeWidth: 12,
-              backgroundColor: Colors.grey.withOpacity(0.2),
-              valueColor: AlwaysStoppedAnimation<Color>(color),
+            child: TweenAnimationBuilder<double>(
+              tween: Tween<double>(begin: 0, end: 1),
+              duration: const Duration(milliseconds: 1500),
+              builder: (context, value, _) => CircularProgressIndicator(
+                value: 1.0,
+                strokeWidth: 10,
+                backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
+                valueColor: AlwaysStoppedAnimation<Color>(baseColor),
+              ),
             ),
           ),
           Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                '${debtHours.abs().toStringAsFixed(1)}h',
-                style: theme.textTheme.headlineMedium,
+              TweenAnimationBuilder<double>(
+                tween: Tween<double>(begin: 0, end: debtHours),
+                duration: const Duration(milliseconds: 1500),
+                builder: (context, value, _) => Text(
+                  '${value.abs().toStringAsFixed(1)}h',
+                  style: theme.textTheme.headlineLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: baseColor,
+                  ),
+                ),
               ),
+              const SizedBox(height: 4),
               Text(
                 debtHours >= 0 ? 'Sleep Debt' : 'Sleep Surplus',
-                style: theme.textTheme.bodyLarge,
+                style: theme.textTheme.titleMedium?.copyWith(
+                  color: theme.textTheme.bodyMedium?.color,
+                ),
               ),
             ],
           ),
