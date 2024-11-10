@@ -14,8 +14,10 @@ Features planned:
 
 The UI was mostly written by the LLMs so there might be quirks that don't exactly make sense, in the code at least. I spent a few minutes improving the sleep debt algorithm and running a few simulations (also written with gptme) which you can find in the simulations [directory](./simulations).
 
-![dark mode](images/dark_mode.jpg)
-![light mode](images/light_mode.jpg)
+<div style="display: flex; justify-content: space-around;">
+    <img src="images/dark_mode.jpg" alt="dark mode" style="width: 45%;">
+    <img src="images/light_mode.jpg" alt="light mode" style="width: 45%;">
+</div>
 
 ## Contributing
 
