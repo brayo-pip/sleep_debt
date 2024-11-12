@@ -19,6 +19,8 @@ The UI was mostly written by the LLMs so there might be quirks that don't exactl
     <img src="images/light_mode.jpg" alt="light mode" style="width: 45%;">
 </div>
 
+Note: that the time spend in bed, and the time actually spent asleep is different. Hence the different figures. The app is meant to be used with a smart watch, else it'll assume a 90% efficiency(typical).(Not yet implemented)
+
 ## Contributing
 
 Clone by running the following command:
