@@ -4,7 +4,7 @@ import 'dart:collection';
 
 class SleepDebtCalculator {
   static const double targetSleepHours =
-      7.0; // Minimum target for debt calculation
+      8.0; // Minimum target for debt calculation
   static const double recommendedSleepHours =
       8.0; // Recommended for optimal health
   static const double maxDailyDebt = 16.0;

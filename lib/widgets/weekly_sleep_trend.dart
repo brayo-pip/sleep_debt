@@ -66,9 +66,9 @@ class WeeklySleepTrend extends StatelessWidget {
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
                     color: hours > 0 
-                      ? hours >= 7.0
+                      ? hours >= 8.0
                         ? AppColors.debtFree 
-                        : hours >= 6.0
+                        : hours >= 7.0
                           ? AppColors.minimalDebt
                           : AppColors.highDebt
                       : AppColors.gray,
